@@ -37,6 +37,9 @@ module Rails3JQueryAutocomplete
           class_name = options[:class_name] || object
           items = get_autocomplete_items(:model => get_object(class_name), \
             :options => options, :term => term, :method => method)
+            if options[:uniq]
+              items = items.uniq_by{|i| i.send(method)}
+            end
         else
           items = {}
         end
@@ -46,5 +49,14 @@ module Rails3JQueryAutocomplete
     end
   end
 
+end
+module Enumerable
+  def uniq_by
+    seen = {}
+    select { |v|
+      key = yield(v)
+      (seen[key]) ? nil : (seen[key] = true)
+    }
+  end
 end
 
