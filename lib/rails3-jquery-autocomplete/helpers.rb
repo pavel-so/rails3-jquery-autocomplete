@@ -36,7 +36,7 @@ module Rails3JQueryAutocomplete
       elsif ancestors_ary.include?('Mongoid::Document')
         :mongoid
       elsif ancestors_ary.include?('MongoMapper::Document')
-        :mongo_mapper  
+        :mongo_mapper
       else
         raise NotImplementedError
       end
@@ -70,7 +70,7 @@ module Rails3JQueryAutocomplete
             end
           else
             [[method.to_sym, :asc]]
-          end  
+          end
         when :activerecord then
           table_prefix = model ? "#{model.table_name}." : ""
           order || "#{table_prefix}#{method} ASC"
@@ -105,6 +105,7 @@ module Rails3JQueryAutocomplete
       term       = parameters[:term]
       method     = parameters[:method]
       options    = parameters[:options]
+      use_limit? = parameters[:use_limit]
 
       is_full_search = options[:full]
       scopes         = Array(options[:scopes])
@@ -124,12 +125,17 @@ module Rails3JQueryAutocomplete
           items  = model.where(method.to_sym => /#{search}/i).limit(limit).order_by(order)
         when :mongo_mapper
           search = (is_full_search ? '.*' : '^') + term + '.*'
-          items  = model.where(method.to_sym => /#{search}/i).limit(limit).sort(order)  
+          items  = model.where(method.to_sym => /#{search}/i).limit(limit).sort(order)
         when :activerecord
           table_name = model.table_name
           items = items.select(["#{table_name}.#{model.primary_key}", "#{table_name}.#{method}"] + (options[:extra_data].blank? ? [] : options[:extra_data])) unless options[:full_model]
-          items = items.where(["LOWER(#{table_name}.#{method}) #{like_clause} ?", "#{(is_full_search ? '%' : '')}#{term.downcase}%"]) \
+          if use_limit?
+            items = items.where(["LOWER(#{table_name}.#{method}) #{like_clause} ?", "#{(is_full_search ? '%' : '')}#{term.downcase}%"]) \
               .limit(limit).order(order)
+          else
+            items = items.where(["LOWER(#{table_name}.#{method}) #{like_clause} ?", "#{(is_full_search ? '%' : '')}#{term.downcase}%"]) \
+              .order(order)
+          end
       end
     end
   end
