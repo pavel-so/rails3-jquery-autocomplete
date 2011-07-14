@@ -24,7 +24,7 @@ module Rails3JQueryAutocomplete
   #
   module ClassMethods
     def autocomplete(object, method, options = {}, &block)
-      options = options.merge block.call
+      options = options.merge yield
       define_method("autocomplete_#{object}_#{method}") do
 
 
