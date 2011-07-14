@@ -24,10 +24,10 @@ module Rails3JQueryAutocomplete
   #
   module ClassMethods
     def autocomplete(object, method, options = {}, &block)
-      options = options.merge yield
+
       define_method("autocomplete_#{object}_#{method}") do
 
-
+        options = options.merge yield
         method = options[:column_name] if options.has_key?(:column_name)
 
         term = params[:term]
