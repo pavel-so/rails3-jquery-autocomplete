@@ -26,8 +26,9 @@ module Rails3JQueryAutocomplete
     def autocomplete(object, method, options = {}, &block)
 
       define_method("autocomplete_#{object}_#{method}") do
-
-        options = options.merge yield
+        if block_given?
+          options = options.merge yield
+        end
         method = options[:column_name] if options.has_key?(:column_name)
 
         term = params[:term]
