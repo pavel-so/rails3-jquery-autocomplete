@@ -105,7 +105,6 @@ module Rails3JQueryAutocomplete
       term       = parameters[:term]
       method     = parameters[:method]
       options    = parameters[:options]
-      use_limit = parameters[:use_limit]
 
       is_full_search = options[:full]
       scopes         = Array(options[:scopes])
@@ -132,7 +131,7 @@ module Rails3JQueryAutocomplete
           if options[:where]
             items = items.where(options[:where])
           end
-          if use_limit
+          if options[:use_limit]
             items = items.where(["LOWER(#{table_name}.#{method}) #{like_clause} ?", "#{(is_full_search ? '%' : '')}#{term.downcase}%"]) \
               .limit(limit).order(order)
           else
