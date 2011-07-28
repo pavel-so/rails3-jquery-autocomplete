@@ -39,7 +39,12 @@ module Rails3JQueryAutocomplete
           items = get_autocomplete_items(:model => get_object(class_name), \
             :options => options, :term => term, :method => method)
             if options[:uniq]
-              items = items.uniq_by{|i| i.send(method)}
+
+              if options[:display_value]
+                items = items.uniq_by{|i| i.send(options[:display_value)}
+              else
+                items = items.uniq_by{|i| i.send(method)}
+              end
             end
         else
           items = {}
