@@ -127,6 +127,9 @@ module Rails3JQueryAutocomplete
           items  = model.where(method.to_sym => /#{search}/i).limit(limit).sort(order)
         when :activerecord
           table_name = model.table_name
+          if options[:joins]
+            items = model.joins(options[:joins])
+          end
           items = items.select(["#{table_name}.#{model.primary_key}", "#{table_name}.#{method}"] + (options[:extra_data].blank? ? [] : options[:extra_data])) unless options[:full_model]
           if options[:where]
             items = items.where(options[:where])
