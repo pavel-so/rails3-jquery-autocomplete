@@ -110,6 +110,10 @@ Only the following terms mould match the query 'un':
 
 * Unacceptable
 
+#### :uniq => true
+
+Return only uniq field values
+
 #### :extra_data
 
 By default, your search will only return the required columns from the database needed to populate your form, namely id and the column you are searching (name, in the above example).
@@ -151,6 +155,16 @@ Only the object's id and the column you are searching on will be returned in JSO
 #### :column_name
    By default autocomplete uses method name as column name. Now it can be specified using column_name options
    `:column_name => 'name'`
+
+#### :use_limit
+   This option defines whether to use limit of 10(old code) or not.
+   `:use_limit => false`
+
+#### &block
+   Also one can pass 1 complec option which need to be calculated in the context through the block
+     autocomplete :item, :brand do
+                 {:where =>{:user_id =>  current_user.id, :status => 'published'}}
+               end
 
 ### View
 
@@ -262,9 +276,9 @@ Then you'll have access to the following helper:
 An example on how to use it:
 
     scenario "Autocomplete" do
-      lambda do 
+      lambda do
         Brand.create! [
-          {:name => "Alpha"}, 
+          {:name => "Alpha"},
           {:name => "Beta"},
           {:name => "Gamma"}
         ]
